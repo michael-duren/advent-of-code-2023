@@ -1,6 +1,12 @@
-﻿string testPath = Paths[0].Test;
-string inputPath = Paths[0].Input;
+﻿using Shared;
+using Shared.Solutions.DayOne;
 
-List<string> test = ReadInput(testPath).ToList();
+string testInput = PathInputFactory.Create("One").Test;
+string input = PathInputFactory.Create("One").Input;
+Console.WriteLine($"Input path: {input}");
 
-test.ForEach(Console.WriteLine);
+List<string> test = Helpers.ReadInput(input);
+
+int result = PartTwo.Solve(test);
+
+Console.WriteLine(result);
