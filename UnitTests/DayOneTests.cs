@@ -3,7 +3,7 @@ using Shared.Solutions.DayOne;
 
 namespace UnitTests;
 
-public class DayOne
+public class DayOneTests
 {
     [Fact]
     public void PartOneTest()

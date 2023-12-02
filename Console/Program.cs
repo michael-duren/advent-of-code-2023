@@ -1,12 +1,11 @@
 ﻿using Shared;
-using Shared.Solutions.DayOne;
+using Shared.Solutions.DayTwo;
 
-string testInput = PathInputFactory.Create("One").Test;
-string input = PathInputFactory.Create("One").Input;
+string input = PathInputFactory.Create("Two").Input;
 Console.WriteLine($"Input path: {input}");
 
 List<string> test = Helpers.ReadInput(input);
 
-int result = PartTwo.Solve(test);
+int result = DayTwo.SolvePartOne(test);
 
 Console.WriteLine(result);
