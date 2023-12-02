@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace Shared.Solutions.DayTwo;
 
-public static class DayTwo
+public static partial class DayTwo
 {
     private class Round
     {
@@ -17,19 +17,20 @@ public static class DayTwo
             _allowedBlue = 14;
 
             string[] colorSplit = colors.Split(",");
+            Regex rx = Digits();
             foreach (string c in colorSplit)
             {
                 if (c.Contains("red"))
                 {
-                    TotalRed += int.Parse(c.Replace("red", "").Trim());
+                    TotalRed += int.Parse(rx.Match(c).ToString());
                 }
                 else if (c.Contains("green"))
                 {
-                    TotalGreen += int.Parse(c.Replace("green", "").Trim());
+                    TotalGreen += int.Parse(rx.Match(c).ToString());
                 }
                 else if (c.Contains("blue"))
                 {
-                    TotalBlue += int.Parse(c.Replace("blue", "").Trim());
+                    TotalBlue += int.Parse(rx.Match(c).ToString());
                 }
             }
         }
@@ -54,7 +55,7 @@ public static class DayTwo
             (string roundNumber, string[] colorRounds) = (split[0], split[1].Split(";"));
 
             bool isPossible = true;
-            Regex rx = new(@"\d+");
+            Regex rx = Digits();
             int roundNumberParsed = int.Parse(rx.Match(roundNumber).ToString());
 
             foreach (var colorRound in colorRounds)
@@ -73,8 +74,67 @@ public static class DayTwo
         return possibleGames;
     }
 
+    private class RoundAlt
+    {
+        public void UpdateMin(string colors)
+        {
+            string[] colorSplit = colors.Split(",");
+            foreach (string c in colorSplit)
+            {
+                if (c.Contains("red"))
+                {
+                    MinRed = GetMin(c, MinRed);
+                }
+                else if (c.Contains("green"))
+                {
+                    MinGreen = GetMin(c, MinGreen);
+                }
+                else if (c.Contains("blue"))
+                {
+                    MinBlue = GetMin(c, MinBlue);
+                }
+            }
+        }
+
+        public int ReturnPower()
+        {
+            return MinRed * MinGreen * MinBlue;
+        }
+
+
+        private int MinRed { get; set; }
+        private int MinGreen { get; set; }
+        private int MinBlue { get; set; }
+    }
+
     public static int SolvePartTwo(List<string> lines)
     {
-        return 0;
+        int totalPower = 0;
+
+        lines.ForEach(line =>
+        {
+            string[] split = line.Split(":");
+            string[] colorRounds = split[1].Split(";");
+
+            RoundAlt round = new();
+            foreach (var colorRound in colorRounds)
+            {
+                round.UpdateMin(colorRound);
+            }
+
+            totalPower += round.ReturnPower();
+        });
+
+        return totalPower;
     }
+
+    private static int GetMin(string colorString, int curr)
+    {
+        Regex rx = Digits();
+        int colorCount = int.Parse(rx.Match(colorString).ToString());
+        return colorCount > curr ? colorCount : curr;
+    }
+
+    [GeneratedRegex(@"\d+")]
+    private static partial Regex Digits();
 }
