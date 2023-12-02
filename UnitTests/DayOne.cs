@@ -41,7 +41,7 @@ public class DayOne
         List<string> input = Helpers.ReadInput(path.Input);
         
         // act
-        int result = PartTwo.Solve(input);
+        int result = PartTwoTryTwo.Solve(input);
         
         // assert
         Assert.Equal(53539, result);

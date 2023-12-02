@@ -6,13 +6,11 @@ public abstract partial class PartTwo
 {
     public static int Solve(List<string> lines)
     {
+        Regex rx = MyRegex();
         return lines.Select(line =>
                 {
-                    var parsedLines = ReplaceWordNumbers(line);
-                    Regex rx = MyRegex();
-                    var matches = rx.Matches(parsedLines).Select(m => m.ToString()).ToArray();
-                    int a;
-                    var result = int.TryParse($"{matches[0]}{matches[^1]}", out a);
+                    var matches = rx.Matches(ReplaceWordNumbers(line)).Select(m => m.ToString()).ToArray();
+                    var result = int.TryParse($"{matches[0]}{matches[^1]}", out var a);
                     return result ? a : 0;
                 }
             )
