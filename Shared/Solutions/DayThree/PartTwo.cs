@@ -20,16 +20,16 @@ public static partial class PartTwo
         public int Y { get; set; }
     }
 
-    public static Stack<Position> GetGearCoordinates(List<string> schematic)
+    public static List<Position> GetGearCoordinates(List<string> schematic)
     {
-        Stack<Position> starCoordinates = new();
+        List<Position> starCoordinates = new();
         for (int i = 0; i < schematic.Count; i++)
         {
             for (int j = 0; j < schematic.Count; j++)
             {
                 if (schematic[i][j] != '*') continue;
                 Position position = new() { X = j, Y = i };
-                starCoordinates.Push(position);
+                starCoordinates.Add(position);
             }
         }
 
@@ -38,7 +38,7 @@ public static partial class PartTwo
 
     public static List<Position>? NeighboringRatios(List<string> schematic, Position currPosition)
     {
-        HashSet<Position> neighboringCoordinates = new();
+        List<Position> neighboringCoordinates = new();
         foreach (var direction in _directions)
         {
             var newPosition = new Position
@@ -52,10 +52,10 @@ public static partial class PartTwo
                 newPosition.Y < 0 || newPosition.Y >= schematic.Count)
                 continue;
 
-            // Digit check and add to HashSet for uniqueness
             if (char.IsDigit(schematic[newPosition.Y][newPosition.X]))
             {
-                neighboringCoordinates.Add(newPosition);
+                if (!IsPartOfIdentifiedNumber(neighboringCoordinates.ToList(), newPosition))
+                    neighboringCoordinates.Add(newPosition);
             }
 
             // Break if two unique digits are found
@@ -63,8 +63,8 @@ public static partial class PartTwo
                 break;
         }
 
-        // Convert HashSet to List and return if two unique positions are found
-        return neighboringCoordinates.Count == 2 ? neighboringCoordinates.ToList() : null;
+        Console.WriteLine($"Neighboring Coordinates: {neighboringCoordinates.Count}");
+        return neighboringCoordinates.Count > 1 ? neighboringCoordinates : null;
     }
 
 
@@ -96,19 +96,34 @@ public static partial class PartTwo
             $"{lowSlice}{highSlice}");
     }
 
+    private static bool IsPartOfIdentifiedNumber(List<Position> identifiedNumbers, Position position)
+    {
+        foreach (var identifiedPosition in identifiedNumbers)
+        {
+            // Check if the X values are adjacent (differ by 1) and have the same Y value
+            if ((Math.Abs(identifiedPosition.X - position.X) == 1) && identifiedPosition.Y == position.Y)
+            {
+                return true; // The position is part of an already identified number
+            }
+        }
+
+        return false; // The position is not part of any identified number
+    }
+
+
     public static int Solve(List<string> lines)
     {
-        Stack<Position> starCoordinates = GetGearCoordinates(lines);
-        Stack<int> numbers = new();
-        while (starCoordinates.Count > 0)
+        List<Position> starCoordinates = GetGearCoordinates(lines);
+        List<int> numbers = new();
+        for (int i = 0; i < starCoordinates.Count; i++)
         {
-            Position currPosition = starCoordinates.Pop();
+            Position currPosition = starCoordinates[i];
             List<Position>? neighboringCoordinates = NeighboringRatios(lines, currPosition);
             if (neighboringCoordinates is null)
                 continue;
             int firstNum = GetFullNumberFromCoordinates(lines, neighboringCoordinates[0]);
             int secondNum = GetFullNumberFromCoordinates(lines, neighboringCoordinates[1]);
-            numbers.Push(firstNum * secondNum);
+            numbers.Add(firstNum * secondNum);
         }
 
         return numbers.Sum();
