@@ -60,11 +60,10 @@ public static partial class PartTwo
 
             // Break if two unique digits are found
             if (neighboringCoordinates.Count == 2)
-                break;
+                return neighboringCoordinates;
         }
 
-        Console.WriteLine($"Neighboring Coordinates: {neighboringCoordinates.Count}");
-        return neighboringCoordinates.Count > 1 ? neighboringCoordinates : null;
+        return null;
     }
 
 

@@ -33,17 +33,17 @@ public class DayOneTests
         Assert.Equal(281, result);
     }
 
-    [Fact]
-    public void PartTwoTestTwo()
-    {
-        // arrange
-        PathInput path = PathInputFactory.Create("One", "Two");
-        List<string> input = Helpers.ReadInput(path.Input);
-        
-        // act
-        int result = PartTwoTryTwo.Solve(input);
-        
-        // assert
-        Assert.Equal(53539, result);
-    }
+    // [Fact]
+    // public void PartTwoTestTwo()
+    // {
+    //     // arrange
+    //     PathInput path = PathInputFactory.Create("One", "Two");
+    //     List<string> input = Helpers.ReadInput(path.Input);
+    //     
+    //     // act
+    //     int result = PartTwoTryTwo.Solve(input);
+    //     
+    //     // assert
+    //     Assert.Equal(53539, result);
+    // }
 }

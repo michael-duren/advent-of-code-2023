@@ -6,11 +6,13 @@ namespace UnitTests;
 public class DayThreeTests
 {
     private readonly List<string> _testInput;
+    private readonly List<string> _input;
 
     public DayThreeTests()
     {
         PathInput path = PathInputFactory.Create("Three");
         _testInput = Helpers.ReadInput(path.Test);
+        _input = Helpers.ReadInput(path.Input);
     }
 
     [Fact]
@@ -90,6 +92,19 @@ public class DayThreeTests
     }
 
     [Fact]
+    public void GetFullNumberFromCoordinatesTestTwo()
+    {
+        // arrange
+        PartTwo.Position position = new PartTwo.Position { X = 1, Y = 14 };
+
+        // act
+        int result = PartTwo.GetFullNumberFromCoordinates(_input, position);
+
+        // assert
+        Assert.Equal(862, result);
+    }
+
+    [Fact]
     public void NeighboringRatiosDoesNotReturnNull()
     {
         // arrange
@@ -98,6 +113,19 @@ public class DayThreeTests
 
         // act
         List<PartTwo.Position>? result = PartTwo.NeighboringRatios(_testInput, position);
+
+        Assert.NotNull(result);
+    }
+    
+    [Fact]
+    public void NeighboringRatiosDoesNotReturnNullTwo()
+    {
+        // arrange
+        // arrange
+        PartTwo.Position position = new PartTwo.Position { X = 4, Y = 2 };
+
+        // act
+        List<PartTwo.Position>? result = PartTwo.NeighboringRatios(_input, position);
 
         Assert.NotNull(result);
     }
