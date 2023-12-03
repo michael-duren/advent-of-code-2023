@@ -1,9 +1,11 @@
+using System.Text;
+
 namespace Shared.Solutions.DayThree;
 
-public static partial class PartTwo
+public static class PartTwo
 {
-    private static readonly List<Position> _directions = new()
-    {
+    private static readonly List<Position> _directions =
+    [
         new Position { X = 0, Y = -1 }, // Go Up
         new Position { X = 1, Y = 0 }, // Go Right
         new Position { X = 0, Y = 1 }, // Go Down
@@ -12,7 +14,7 @@ public static partial class PartTwo
         new Position { X = -1, Y = -1 }, // Go Diagonal Left
         new Position { X = 1, Y = 1 }, // Go Diagonal Bottom Right
         new Position { X = -1, Y = 1 }, // Go Diagonal Bottom Left
-    };
+    ];
 
     public struct Position
     {
@@ -20,12 +22,13 @@ public static partial class PartTwo
         public int Y { get; set; }
     }
 
+    // tested
     public static List<Position> GetGearCoordinates(List<string> schematic)
     {
-        List<Position> starCoordinates = new();
+        List<Position> starCoordinates = [];
         for (int i = 0; i < schematic.Count; i++)
         {
-            for (int j = 0; j < schematic.Count; j++)
+            for (int j = 0; j < schematic[0].Length; j++)
             {
                 if (schematic[i][j] != '*') continue;
                 Position position = new() { X = j, Y = i };
@@ -36,12 +39,13 @@ public static partial class PartTwo
         return starCoordinates;
     }
 
+    // tested
     public static List<Position>? NeighboringRatios(List<string> schematic, Position currPosition)
     {
-        List<Position> neighboringCoordinates = new();
-        foreach (var direction in _directions)
+        List<Position> neighboringCoordinates = [];
+        foreach (Position direction in _directions)
         {
-            var newPosition = new Position
+            Position newPosition = new()
             {
                 X = currPosition.X + direction.X,
                 Y = currPosition.Y + direction.Y
@@ -49,57 +53,61 @@ public static partial class PartTwo
 
             // Boundary check
             if (newPosition.X < 0 || newPosition.X >= schematic[0].Length ||
-                newPosition.Y < 0 || newPosition.Y >= schematic.Count)
+                newPosition.Y < 0 || newPosition.Y >= schematic.Count || !char.IsDigit(schematic[newPosition.Y][newPosition.X]))
                 continue;
 
-            if (char.IsDigit(schematic[newPosition.Y][newPosition.X]))
-            {
-                if (!IsPartOfIdentifiedNumber(neighboringCoordinates.ToList(), newPosition))
-                    neighboringCoordinates.Add(newPosition);
-            }
-
-            // Break if two unique digits are found
-            if (neighboringCoordinates.Count == 2)
-                return neighboringCoordinates;
+            if (!IsPartOfIdentifiedNumber([.. neighboringCoordinates], newPosition))
+                neighboringCoordinates.Add(newPosition);
         }
 
-        return null;
+        return neighboringCoordinates;
     }
 
 
+    // tested
     public static int GetFullNumberFromCoordinates(List<string> schematic, Position numCoordinates)
     {
-        string lowSlice = schematic[numCoordinates.Y][0..(numCoordinates.X + 1)];
-        string highSlice = schematic[numCoordinates.Y][(numCoordinates.X + 1)..];
-        int lowSliceStopIndex = 0;
-        int highSliceStopIndex = 0;
+        StringBuilder fullNumber = new();
 
-        for (int i = lowSlice.Length - 1; i >= 0; i--)
+        // First, iterate left from the position to get the first part of the number
+        for (int x = numCoordinates.X; x >= 0; x--)
         {
-            if (!char.IsDigit(lowSlice[i]))
+            if (char.IsDigit(schematic[numCoordinates.Y][x]))
+            {
+                // Insert the digit at the beginning of the full number
+                fullNumber.Insert(0, schematic[numCoordinates.Y][x]);
+            }
+            else
+            {
+                // Break the loop if we find a non-digit character
                 break;
-            lowSliceStopIndex = i;
+            }
         }
 
-        for (int i = 0; i < highSlice.Length; i++)
+        // Iterate right
+        for (int x = numCoordinates.X + 1; x < schematic[numCoordinates.Y].Length; x++)
         {
-            highSliceStopIndex = i;
-            if (!char.IsDigit(highSlice[i]))
+            if (char.IsDigit(schematic[numCoordinates.Y][x]))
+            {
+                // Append the digit to the full number
+                fullNumber.Append(schematic[numCoordinates.Y][x]);
+            }
+            else
+            {
+                // Break the loop if we find a non-digit character
                 break;
+            }
         }
 
-        lowSlice = lowSlice[lowSliceStopIndex..];
-        highSlice = highSlice[0..(highSliceStopIndex)];
-
-        return int.Parse(
-            $"{lowSlice}{highSlice}");
+        // Parse the constructed string to an integer
+        return int.Parse(fullNumber.ToString());
     }
+
 
     private static bool IsPartOfIdentifiedNumber(List<Position> identifiedNumbers, Position position)
     {
         foreach (var identifiedPosition in identifiedNumbers)
         {
-            // Check if the X values are adjacent (differ by 1) and have the same Y value
             if ((Math.Abs(identifiedPosition.X - position.X) == 1) && identifiedPosition.Y == position.Y)
             {
                 return true; // The position is part of an already identified number
@@ -113,18 +121,18 @@ public static partial class PartTwo
     public static int Solve(List<string> lines)
     {
         List<Position> starCoordinates = GetGearCoordinates(lines);
-        List<int> numbers = new();
+        int numbers = 0;
         for (int i = 0; i < starCoordinates.Count; i++)
         {
             Position currPosition = starCoordinates[i];
             List<Position>? neighboringCoordinates = NeighboringRatios(lines, currPosition);
-            if (neighboringCoordinates is null)
+            if (neighboringCoordinates?.Count != 2)
                 continue;
             int firstNum = GetFullNumberFromCoordinates(lines, neighboringCoordinates[0]);
             int secondNum = GetFullNumberFromCoordinates(lines, neighboringCoordinates[1]);
-            numbers.Add(firstNum * secondNum);
+            numbers += firstNum * secondNum;
         }
 
-        return numbers.Sum();
+        return numbers;
     }
 }

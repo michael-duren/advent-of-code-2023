@@ -1,11 +1,9 @@
 ﻿using Shared;
 using Shared.Solutions.DayThree;
 
-string input = PathInputFactory.Create("Three").Input;
-Console.WriteLine($"Input path: {input}");
+string inputPath = PathInputFactory.Create("Three").Input;
 
-List<string> test = Helpers.ReadInput(input);
+List<string> input = Helpers.ReadInput(inputPath);
+int result = PartTwo.Solve(input);
 
-int result = PartTwo.Solve(test);
-
-Console.WriteLine(result);
+Console.WriteLine($"Result: {result}");

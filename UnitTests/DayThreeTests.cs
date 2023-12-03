@@ -78,6 +78,19 @@ public class DayThreeTests
         Assert.Equal(4361, result);
     }
 
+    /*
+     * Part Two Tests
+     */
+    [Fact]
+    public void GetGearCoordinatesReturnsRightAmount()
+    {
+        // act
+        List<PartTwo.Position> coords = PartTwo.GetGearCoordinates(_input);
+
+        // assert
+        Assert.Equal(345, coords.Count);
+    }
+
     [Fact]
     public void GetFullNumberFromCoordinatesTest()
     {
@@ -116,18 +129,50 @@ public class DayThreeTests
 
         Assert.NotNull(result);
     }
-    
+
+    [Fact]
+    public void NeighboringReturnsTwo()
+    {
+        // arrange
+        PartTwo.Position position = new PartTwo.Position { X = 3, Y = 14 };
+        PartTwo.Position positionTwo = new PartTwo.Position { X = 99, Y = 18 };
+
+        // act
+        List<PartTwo.Position>? result = PartTwo.NeighboringRatios(_input, position);
+        List<PartTwo.Position>? resultTwo = PartTwo.NeighboringRatios(_input, positionTwo);
+
+        // Assert
+        Assert.Equal(2, result!.Count);
+        Assert.Equal(2, resultTwo!.Count);
+    }
+
+    [Fact]
+    public void NeighboringReturnsTwoFromBothDiagonalAndNumbersAreCorrect()
+    {
+        PartTwo.Position position = new PartTwo.Position { X = 73, Y = 57 };
+
+        List<PartTwo.Position>? result = PartTwo.NeighboringRatios(_input, position);
+
+        Assert.Equal(2, result.Count);
+
+        Assert.Equal(237, PartTwo.GetFullNumberFromCoordinates(_input, result[0]));
+        Assert.Equal(784, PartTwo.GetFullNumberFromCoordinates(_input, result[1]));
+    }
+
     [Fact]
     public void NeighboringRatiosDoesNotReturnNullTwo()
     {
         // arrange
         // arrange
         PartTwo.Position position = new PartTwo.Position { X = 4, Y = 2 };
+        PartTwo.Position positionTwo = new PartTwo.Position { X = 99, Y = 18 };
 
         // act
         List<PartTwo.Position>? result = PartTwo.NeighboringRatios(_input, position);
+        List<PartTwo.Position>? resultTwo = PartTwo.NeighboringRatios(_input, positionTwo);
 
         Assert.NotNull(result);
+        Assert.NotNull(resultTwo);
     }
 
     [Fact]
