@@ -4,7 +4,7 @@ namespace Shared.Solutions.DayThree;
 
 public static partial class PartOne
 {
-    private static List<Position> _directions = new()
+    private static readonly List<Position> _directions = new()
     {
         new Position { X = 0, Y = -1 }, // Go Up
         new Position { X = 1, Y = 0 }, // Go Right
