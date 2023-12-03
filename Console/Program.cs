@@ -6,6 +6,6 @@ Console.WriteLine($"Input path: {input}");
 
 List<string> test = Helpers.ReadInput(input);
 
-int result = PartOne.Solve(test);
+int result = PartTwo.Solve(test);
 
 Console.WriteLine(result);

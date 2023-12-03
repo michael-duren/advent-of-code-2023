@@ -1,9 +1,116 @@
 namespace Shared.Solutions.DayThree;
 
-public class PartTwo
+public static partial class PartTwo
 {
+    private static readonly List<Position> _directions = new()
+    {
+        new Position { X = 0, Y = -1 }, // Go Up
+        new Position { X = 1, Y = 0 }, // Go Right
+        new Position { X = 0, Y = 1 }, // Go Down
+        new Position { X = -1, Y = 0 }, // Go Left
+        new Position { X = 1, Y = -1 }, // Go Diagonal Right
+        new Position { X = -1, Y = -1 }, // Go Diagonal Left
+        new Position { X = 1, Y = 1 }, // Go Diagonal Bottom Right
+        new Position { X = -1, Y = 1 }, // Go Diagonal Bottom Left
+    };
+
+    public struct Position
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+    }
+
+    public static Stack<Position> GetGearCoordinates(List<string> schematic)
+    {
+        Stack<Position> starCoordinates = new();
+        for (int i = 0; i < schematic.Count; i++)
+        {
+            for (int j = 0; j < schematic.Count; j++)
+            {
+                if (schematic[i][j] != '*') continue;
+                Position position = new() { X = j, Y = i };
+                starCoordinates.Push(position);
+            }
+        }
+
+        return starCoordinates;
+    }
+
+    public static List<Position>? NeighboringRatios(List<string> schematic, Position currPosition)
+    {
+        HashSet<Position> neighboringCoordinates = new();
+        foreach (var direction in _directions)
+        {
+            var newPosition = new Position
+            {
+                X = currPosition.X + direction.X,
+                Y = currPosition.Y + direction.Y
+            };
+
+            // Boundary check
+            if (newPosition.X < 0 || newPosition.X >= schematic[0].Length ||
+                newPosition.Y < 0 || newPosition.Y >= schematic.Count)
+                continue;
+
+            // Digit check and add to HashSet for uniqueness
+            if (char.IsDigit(schematic[newPosition.Y][newPosition.X]))
+            {
+                neighboringCoordinates.Add(newPosition);
+            }
+
+            // Break if two unique digits are found
+            if (neighboringCoordinates.Count == 2)
+                break;
+        }
+
+        // Convert HashSet to List and return if two unique positions are found
+        return neighboringCoordinates.Count == 2 ? neighboringCoordinates.ToList() : null;
+    }
+
+
+    public static int GetFullNumberFromCoordinates(List<string> schematic, Position numCoordinates)
+    {
+        string lowSlice = schematic[numCoordinates.Y][0..(numCoordinates.X + 1)];
+        string highSlice = schematic[numCoordinates.Y][(numCoordinates.X + 1)..];
+        int lowSliceStopIndex = 0;
+        int highSliceStopIndex = 0;
+
+        for (int i = lowSlice.Length - 1; i >= 0; i--)
+        {
+            if (!char.IsDigit(lowSlice[i]))
+                break;
+            lowSliceStopIndex = i;
+        }
+
+        for (int i = 0; i < highSlice.Length; i++)
+        {
+            highSliceStopIndex = i;
+            if (!char.IsDigit(highSlice[i]))
+                break;
+        }
+
+        lowSlice = lowSlice[lowSliceStopIndex..];
+        highSlice = highSlice[0..(highSliceStopIndex)];
+
+        return int.Parse(
+            $"{lowSlice}{highSlice}");
+    }
+
     public static int Solve(List<string> lines)
     {
-        return 0;
+        Stack<Position> starCoordinates = GetGearCoordinates(lines);
+        Stack<int> numbers = new();
+        while (starCoordinates.Count > 0)
+        {
+            Position currPosition = starCoordinates.Pop();
+            List<Position>? neighboringCoordinates = NeighboringRatios(lines, currPosition);
+            if (neighboringCoordinates is null)
+                continue;
+            int firstNum = GetFullNumberFromCoordinates(lines, neighboringCoordinates[0]);
+            int secondNum = GetFullNumberFromCoordinates(lines, neighboringCoordinates[1]);
+            numbers.Push(firstNum * secondNum);
+        }
+
+        return numbers.Sum();
     }
 }

@@ -39,7 +39,7 @@ public class DayThreeTests
         // assert
         Assert.True(result);
     }
-    
+
     [Fact]
     public void CheckNumberContinuesReturnsFalse()
     {
@@ -52,7 +52,7 @@ public class DayThreeTests
         // assert
         Assert.False(result);
     }
-    
+
     [Fact]
     public void CheckNumberContinuesReturnsTrue()
     {
@@ -74,5 +74,40 @@ public class DayThreeTests
 
         // assert
         Assert.Equal(4361, result);
+    }
+
+    [Fact]
+    public void GetFullNumberFromCoordinatesTest()
+    {
+        // arrange
+        PartTwo.Position position = new PartTwo.Position { X = 2, Y = 0 };
+
+        // act
+        int result = PartTwo.GetFullNumberFromCoordinates(_testInput, position);
+
+        // assert
+        Assert.Equal(467, result);
+    }
+
+    [Fact]
+    public void NeighboringRatiosDoesNotReturnNull()
+    {
+        // arrange
+        // arrange
+        PartTwo.Position position = new PartTwo.Position { X = 5, Y = 8 };
+
+        // act
+        List<PartTwo.Position>? result = PartTwo.NeighboringRatios(_testInput, position);
+
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public void PartTwoTest()
+    {
+        // act
+        int result = PartTwo.Solve(_testInput);
+        //
+        Assert.Equal(467835, result);
     }
 }
