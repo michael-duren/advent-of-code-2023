@@ -1,9 +1,9 @@
 ﻿using Shared;
-using Shared.Solutions.DayThree;
+using Shared.Solutions.DayFour;
 
-string inputPath = PathInputFactory.Create("Three").Input;
+string inputPath = PathInputFactory.Create("Four").Input;
 
 List<string> input = Helpers.ReadInput(inputPath);
-int result = PartTwo.Solve(input);
+int result = PartOne.Solve(input);
 
 Console.WriteLine($"Result: {result}");
