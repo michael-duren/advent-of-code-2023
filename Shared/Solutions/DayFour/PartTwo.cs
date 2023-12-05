@@ -48,7 +48,6 @@ public static class PartTwo
 
     public static int Solve(List<string> input)
     {
-        // total lines are total cards
         List<Round> rounds = new();
         for (int i = 0; i < input.Count; i++)
         {
@@ -59,7 +58,7 @@ public static class PartTwo
 
         Dictionary<int, int> wonCards = Enumerable.Range(1, rounds.Count).ToDictionary(k => k, v => 1);
 
-        foreach (var round in rounds)
+        foreach (Round round in rounds)
         {
             CountCards(round, wonCards, rounds);
         }
