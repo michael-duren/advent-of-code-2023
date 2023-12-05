@@ -3,12 +3,12 @@ using Shared.Solutions.DayFour;
 
 namespace UnitTests;
 
-public class PartFourTests
+public class DayFourTests
 {
     private readonly List<string> _testInput;
     private readonly List<string> _input;
 
-    public PartFourTests()
+    public DayFourTests()
     {
         string testPath = PathInputFactory.Create("Four").Test;
         string inputPath = PathInputFactory.Create("Four").Input;
@@ -24,6 +24,18 @@ public class PartFourTests
         const int expected = 13;
         // act 
         int result = PartOne.Solve(_testInput);
+
+        // assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void PartTwoTest()
+    {
+        const int expected = 30;
+
+        // act
+        int result = PartTwo.Solve(_testInput);
 
         // assert
         Assert.Equal(expected, result);
