@@ -1,43 +1,44 @@
 using Shared;
 using Shared.Solutions.DayFour;
 
-namespace UnitTests;
-
-public class DayFourTests
+namespace UnitTests
 {
-    private readonly List<string> _testInput;
-    private readonly List<string> _input;
-
-    public DayFourTests()
+    public class DayFourTests
     {
-        string testPath = PathInputFactory.Create("Four").Test;
-        string inputPath = PathInputFactory.Create("Four").Input;
+        private readonly List<string> _testInput;
+        // private readonly List<string> _input;
 
-        _testInput = Helpers.ReadInput(testPath);
-        _input = Helpers.ReadInput(inputPath);
-    }
+        public DayFourTests()
+        {
+            string testPath = PathInputFactory.Create("Four").Test;
+            // string inputPath = PathInputFactory.Create("Four").Input;
 
-    [Fact]
-    public void PartOneTest()
-    {
-        // arrange
-        const int expected = 13;
-        // act 
-        int result = PartOne.Solve(_testInput);
+            _testInput = Helpers.ReadInput(testPath);
+            // _input = Helpers.ReadInput(inputPath);
+        }
 
-        // assert
-        Assert.Equal(expected, result);
-    }
+        [Fact]
+        public void PartOneTest()
+        {
+            // arrange
+            const int expected = 13;
+            // act 
+            int result = PartOne.Solve(_testInput);
 
-    [Fact]
-    public void PartTwoTest()
-    {
-        const int expected = 30;
+            // assert
+            Assert.Equal(expected, result);
+        }
 
-        // act
-        int result = PartTwo.Solve(_testInput);
+        [Fact]
+        public void PartTwoTest()
+        {
+            const int expected = 30;
 
-        // assert
-        Assert.Equal(expected, result);
+            // act
+            int result = PartTwo.Solve(_testInput);
+
+            // assert
+            Assert.Equal(expected, result);
+        }
     }
 }
