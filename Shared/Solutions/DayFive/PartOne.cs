@@ -2,14 +2,14 @@ namespace Shared.Solutions.DayFive
 {
     public static class PartOne
     {
-        public readonly struct CategoryItem
+        private readonly struct CategoryItem
         {
             public ulong DestinationRangeStart { get; init; }
             public ulong SourceRangeStart { get; init; }
             public ulong Range { get; init; }
         }
 
-        public class Category
+        private class Category
         {
             public string Name { get; init; } = null!; // for debugging
             public List<CategoryItem> Items { get; init; } = new();
@@ -33,10 +33,9 @@ namespace Shared.Solutions.DayFive
                             source = item.DestinationRangeStart + (source - item.SourceRangeStart);
                             break;
                         }
-
-                        ;
                     }
                 }
+
                 // after each category, add the source to the locations list
                 locations.Add(source);
             }

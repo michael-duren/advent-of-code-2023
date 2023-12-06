@@ -28,5 +28,17 @@ namespace UnitTests
             // assert
             Assert.Equal(expected, result);
         }
+
+        [Fact]
+        public void PartTwoTest()
+        {
+            // arrange
+            const long expected = 46;
+            // act 
+            long result = PartTwo.Solve(_testInput);
+
+            // assert
+            Assert.Equal(expected, result);
+        }
     }
 }
