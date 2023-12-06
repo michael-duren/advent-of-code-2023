@@ -1,9 +1,9 @@
 ﻿using Shared;
 using Shared.Solutions.DayFive;
 
-string inputPath = PathInputFactory.Create("Five").Test;
+string inputPath = PathInputFactory.Create("Five").Input;
 
 List<string> input = Helpers.ReadInput(inputPath);
-int result = PartOne.Solve(input);
+ulong result = PartOne.Solve(input);
 
 Console.WriteLine($"Result: {result}");

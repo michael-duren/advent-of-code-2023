@@ -16,7 +16,6 @@ namespace Shared.Solutions.DayFive
         }
 
 
-
         public static ulong Solve(List<string> lines)
         {
             (List<Category> categories, List<ulong> seeds) = ParseInput(lines);
@@ -33,11 +32,13 @@ namespace Shared.Solutions.DayFive
                         {
                             source = item.DestinationRangeStart + (source - item.SourceRangeStart);
                             break;
-                        };
+                        }
+
+                        ;
                     }
-                    // after each category, add the source to the locations list
-                    locations.Add(source);
                 }
+                // after each category, add the source to the locations list
+                locations.Add(source);
             }
 
             return locations.Min();
@@ -52,7 +53,6 @@ namespace Shared.Solutions.DayFive
 
             foreach (string line in lines)
             {
-
                 if (string.IsNullOrWhiteSpace(line))
                 {
                     inCategory = false;
@@ -81,12 +81,13 @@ namespace Shared.Solutions.DayFive
 
                     categories[^1].Items.Add(new CategoryItem
                     {
-                        DestinationRangeStart = ulong.TryParse(parts[0], out ulong destinationRangeStart) ? destinationRangeStart : 0,
+                        DestinationRangeStart = ulong.TryParse(parts[0], out ulong destinationRangeStart)
+                            ? destinationRangeStart
+                            : 0,
                         SourceRangeStart = ulong.TryParse(parts[1], out ulong sourceRangeStart) ? sourceRangeStart : 0,
                         Range = ulong.TryParse(parts[2], out ulong range) ? range : 0
                     });
                 }
-
             }
 
             return (categories, seeds);
