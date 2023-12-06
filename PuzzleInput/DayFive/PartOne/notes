@@ -1,0 +1,36 @@
+seeds: 79 14 55 13 seeds to be planted
+
+seed-to-soil map:
+50 98 2             destination range start (soil number), source range start (seed number), range length
+52 50 48            dest: 52-99, source: 50-97, range: 48
+
+Any seed numbers that aren't mapped correspond to the same destination number. 
+So seed 10s destination is soil 10
+
+soil-to-fertilizer map:
+0 15 37
+37 52 2
+39 0 15
+
+fertilizer-to-water map:
+49 53 8
+0 11 42
+42 0 7
+57 7 4
+
+water-to-light map:
+88 18 7
+18 25 70
+
+light-to-temperature map:
+45 77 23
+81 45 19
+68 64 13
+
+temperature-to-humidity map:
+0 69 1
+1 0 69
+
+humidity-to-location map:
+60 56 37
+56 93 4
