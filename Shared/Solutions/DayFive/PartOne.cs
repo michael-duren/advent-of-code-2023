@@ -11,11 +11,40 @@ namespace Shared.Solutions.DayFive
 
         public class Category
         {
-            public string Name { get; init; } = null!;
+            public string Name { get; init; } = null!; // for debugging
             public List<CategoryItem> Items { get; init; } = new();
         }
 
-        public static (List<Category>, List<ulong>) ParseInput(List<string> lines)
+
+
+        public static ulong Solve(List<string> lines)
+        {
+            (List<Category> categories, List<ulong> seeds) = ParseInput(lines);
+            List<ulong> locations = new();
+
+            foreach (ulong seed in seeds) // loop through seeds
+            {
+                ulong source = seed; // assign seed to source to start
+                foreach (Category category in categories) // foreach category get the destination and update source
+                {
+                    foreach (CategoryItem item in category.Items)
+                    {
+                        if (source >= item.SourceRangeStart && source < item.SourceRangeStart + item.Range)
+                        {
+                            source = item.DestinationRangeStart + (source - item.SourceRangeStart);
+                            break;
+                        };
+                    }
+                    // after each category, add the source to the locations list
+                    locations.Add(source);
+                }
+            }
+
+            return locations.Min();
+        }
+
+
+        private static (List<Category>, List<ulong>) ParseInput(List<string> lines)
         {
             List<Category> categories = new();
             List<ulong> seeds = new();
@@ -60,15 +89,7 @@ namespace Shared.Solutions.DayFive
 
             }
 
-
             return (categories, seeds);
-        }
-
-
-        public static int Solve(List<string> lines)
-        {
-            (List<Category> categories, List<ulong> seeds) = ParseInput(lines);
-            return 0;
         }
     }
 }
