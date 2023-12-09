@@ -10,8 +10,8 @@ namespace UnitTests
 
         public DaySixTests()
         {
-            string testPath = PathInputFactory.Create("Five").Test;
-            string inputPath = PathInputFactory.Create("Five").Input;
+            string testPath = PathInputFactory.Create("Six").Test;
+            string inputPath = PathInputFactory.Create("Six").Input;
 
             _testInput = Helpers.ReadInput(testPath);
             _input = Helpers.ReadInput(inputPath);
@@ -21,7 +21,7 @@ namespace UnitTests
         public void PartOneTest()
         {
             // arrange
-            const int expected = 35;
+            const int expected = 288;
             // act 
             int result = PartOne.Solve(_testInput);
 
@@ -29,16 +29,16 @@ namespace UnitTests
             Assert.Equal(expected, result);
         }
 
-        // [Fact]
-        // public void PartTwoTest()
-        // {
-        //     // arrange
-        //     const long expected = 46;
-        //     // act 
-        //     long result = PartTwo.Solve(_testInput);
-        //
-        //     // assert
-        //     Assert.Equal(expected, result);
-        // }
+        [Fact]
+        public void PartTwoTest()
+        {
+            // arrange
+            const long expected = 71503;
+            // act 
+            long result = PartTwo.Solve(_testInput);
+        
+            // assert
+            Assert.Equal(expected, result);
+        }
     }
 }
