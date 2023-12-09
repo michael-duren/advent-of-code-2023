@@ -24,6 +24,7 @@ public static class PartTwo
 
     private static readonly Dictionary<char, int> _cardValues = new()
     {
+        { 'J', 1 },
         { '2', 2 },
         { '3', 3 },
         { '4', 4 },
@@ -33,7 +34,6 @@ public static class PartTwo
         { '8', 8 },
         { '9', 9 },
         { 'T', 10 },
-        { 'J', 11 },
         { 'Q', 12 },
         { 'K', 13 },
         { 'A', 14 }
@@ -80,28 +80,72 @@ public static class PartTwo
 
     public static HandType GetHandType(Hand hand)
     {
-        Dictionary<string, int> cardCounts = new();
+        int jokerCount = hand.Cards.Count(c => c == 'J');
+
+        if (jokerCount >= 4)
+            return HandType.FiveOfAKind;
+
+        Dictionary<char, int> cardCounts = new();
         foreach (char card in hand.Cards)
         {
-            string cardString = card.ToString();
-            if (cardCounts.ContainsKey(cardString))
+            if (card == 'J')
+                continue;
+            if (cardCounts.ContainsKey(card))
             {
-                cardCounts[cardString]++;
+                cardCounts[card]++;
             }
             else
             {
-                cardCounts.Add(cardString, 1);
+                cardCounts.Add(card, 1);
             }
         }
 
-        return cardCounts.Count switch
+        HandType currHand = cardCounts.ContainsValue(5) ? HandType.FiveOfAKind
+            : cardCounts.ContainsValue(4) ? HandType.FourOfAKind
+            : cardCounts.ContainsValue(3) && cardCounts.ContainsValue(2) ? HandType.FullHouse
+            : cardCounts.ContainsValue(3) ? HandType.ThreeOfAKind
+            : cardCounts.Values.Count(c => c == 2) == 2 ? HandType.TwoPair
+            : cardCounts.ContainsValue(2) ? HandType.OnePair : HandType.HighCard;
+
+        /*
+         * joker count 3
+         */
+        if (jokerCount == 3 && currHand == HandType.OnePair) // 33JJJ
+            return HandType.FiveOfAKind;
+        if (jokerCount == 3 && currHand == HandType.HighCard) // 3AJJJ
+            return HandType.FourOfAKind;
+        /*
+         * joker count 2
+         */
+        if (jokerCount == 2 && currHand == HandType.TwoPair) // AAJJ8
+            return HandType.FourOfAKind;
+
+        if (jokerCount == 2 && currHand == HandType.ThreeOfAKind) // JJAAA
+            return HandType.FiveOfAKind;
+        if (jokerCount == 2 && currHand == HandType.OnePair)
+            return HandType.FourOfAKind;
+        if (jokerCount == 2 && currHand == HandType.HighCard)
+            return HandType.ThreeOfAKind;
+
+        /*
+         * joker count 1
+         */
+        if (jokerCount == 1) // J
         {
-            1 => HandType.FiveOfAKind,
-            2 => cardCounts.ContainsValue(4) ? HandType.FourOfAKind : HandType.FullHouse,
-            3 => cardCounts.ContainsValue(3) ? HandType.ThreeOfAKind : HandType.TwoPair,
-            4 => HandType.OnePair,
-            _ => HandType.HighCard
-        };
+            currHand = currHand switch
+            {
+                HandType.HighCard => HandType.OnePair, // 1356J
+                HandType.OnePair => HandType.ThreeOfAKind, // 1355J
+                HandType.TwoPair => HandType.FullHouse,
+                HandType.ThreeOfAKind => HandType.FourOfAKind,
+                HandType.FourOfAKind => HandType.FiveOfAKind,
+                HandType.FiveOfAKind => throw new Exception("Should not be here"),
+                HandType.FullHouse => throw new Exception("Should not be here"),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
+        return currHand;
     }
 
     public static void SortHands(List<Hand> hands)
