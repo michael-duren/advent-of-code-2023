@@ -21,7 +21,7 @@ namespace UnitTests
         public void PartOneTest()
         {
             // arrange
-            const int expected = 288;
+            const int expected = 6440;
             // act 
             int result = PartOne.Solve(_testInput);
 
