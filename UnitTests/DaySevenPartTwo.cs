@@ -1,14 +1,14 @@
 using Shared;
-using Shared.Solutions.DaySix;
+using static Shared.Solutions.DaySeven.PartTwo;
 
 namespace UnitTests
 {
-    public class DaySixTests
+    public class DaySevenPartTwoTests
     {
         private readonly List<string> _testInput;
         private readonly List<string> _input;
 
-        public DaySixTests()
+        public DaySevenPartTwoTests()
         {
             string testPath = PathInputFactory.Create("Six").Test;
             string inputPath = PathInputFactory.Create("Six").Input;
@@ -21,9 +21,9 @@ namespace UnitTests
         public void PartTwoTest()
         {
             // arrange
-            const long expected = 71503;
+            const long expected = 5905;
             // act 
-            long result = PartTwo.Solve(_testInput);
+            long result = Solve(_testInput);
 
             // assert
             Assert.Equal(expected, result);

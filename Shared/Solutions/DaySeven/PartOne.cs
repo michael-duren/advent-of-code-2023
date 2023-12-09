@@ -45,13 +45,17 @@ namespace Shared.Solutions.DaySeven
             SortHands(hands);
             SortHandsByCardValues(hands);
 
+            return GetWinnings(hands);
+        }
+
+        public static long GetWinnings(List<Hand> hands)
+        {
             long totalWinnings = 0;
 
             for (int i = 0; i < hands.Count; i++)
             {
                 totalWinnings += hands[i].BidAmount * (i + 1);
             }
-
 
             return totalWinnings;
         }
@@ -102,7 +106,16 @@ namespace Shared.Solutions.DaySeven
 
         public static void SortHands(List<Hand> hands)
         {
-            hands.Sort((a, b) => a.HandType.CompareTo(b.HandType));
+            for (int i = 0; i < hands.Count - 1; i++)
+            {
+                for (int j = i + 1; j < hands.Count; j++)
+                {
+                    if (hands[i].HandType > hands[j].HandType)
+                    {
+                        (hands[i], hands[j]) = (hands[j], hands[i]);
+                    }
+                }
+            }
         }
 
         public static sbyte DetermineHigherHandByCard(Hand a, Hand b)
@@ -113,8 +126,12 @@ namespace Shared.Solutions.DaySeven
             for (int i = 0; i < a.Cards.Length; i++)
             {
                 // want to throw if cannot determine 
-                int currA = _cardValues.GetValueOrDefault(a.Cards[i]);
-                int currB = _cardValues.GetValueOrDefault(b.Cards[i]);
+                int currA = _cardValues.ContainsKey(a.Cards[i])
+                    ? _cardValues[a.Cards[i]]
+                    : throw new Exception("Could not determine card value in hand A");
+                int currB = _cardValues.ContainsKey(b.Cards[i])
+                    ? _cardValues[b.Cards[i]]
+                    : throw new Exception("Could not determine card value in hand B");
 
                 if (currA > currB)
                     return 1;
@@ -127,7 +144,17 @@ namespace Shared.Solutions.DaySeven
 
         public static void SortHandsByCardValues(List<Hand> hands)
         {
-            hands.Sort((a, b) => DetermineHigherHandByCard(a, b));
+            for (int i = 0; i < hands.Count - 1; i++)
+            {
+                for (int j = i + 1; j < hands.Count; j++)
+                {
+                    sbyte higherHand = DetermineHigherHandByCard(hands[i], hands[j]);
+                    if (higherHand == 1)
+                    {
+                        (hands[i], hands[j]) = (hands[j], hands[i]);
+                    }
+                }
+            }
         }
     }
 }
