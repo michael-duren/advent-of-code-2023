@@ -4,6 +4,7 @@ namespace Shared
     {
         public string Input { get; set; }
         public string Test { get; set; }
+        public string TestTwo { get; set; }
     }
 
     public static class PathInputFactory
@@ -13,7 +14,9 @@ namespace Shared
             return new PathInput
             {
                 Input = $"/Users/michaelduren/Code/advent-of-code-2023/PuzzleInput/Day{day}/Part{part}/input",
-                Test = $"/Users/michaelduren/Code/advent-of-code-2023/PuzzleInput/Day{day}/Part{part}/test"
+                Test = $"/Users/michaelduren/Code/advent-of-code-2023/PuzzleInput/Day{day}/Part{part}/test",
+                TestTwo = $"/Users/michaelduren/Code/advent-of-code-2023/PuzzleInput/Day{day}/Part{part}/test_two",
+
             };
         }
     }
