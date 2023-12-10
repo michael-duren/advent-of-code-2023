@@ -55,7 +55,7 @@ public static class PartTwo
         long lcm = nums[0];
         for (int i = 1; i < nums.Count; i++)
         {
-            lcm = Lcm(lcm, (long)nums[i]);
+            lcm = Lcm(lcm, nums[i]);
         }
 
         return lcm;
