@@ -19,8 +19,8 @@ public static class PartTwo
         foreach (string position in positions)
         {
             List<int> cycle = new();
-            var current = position;
-            var currentSteps = map.Directions;
+            string? current = position;
+            List<int> currentSteps = map.Directions;
             int stepCount = 0;
             string? firstZ = null;
 
@@ -51,7 +51,7 @@ public static class PartTwo
             cycles.Add(cycle);
         }
 
-        var nums = cycles.Select(c => c[0]).ToList();
+        List<int> nums = cycles.Select(c => c[0]).ToList();
         long lcm = nums[0];
         for (int i = 1; i < nums.Count; i++)
         {
