@@ -31,6 +31,19 @@ namespace UnitTests
         }
 
         [Fact]
+        public void PartOne_GetsCorrectInputAnswer()
+        {
+            // arrange
+            const long expected = 2174807968;
+
+            // act 
+            long actual = Solve(_input);
+
+            // assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
         public void GetListsToZero_CorrectlyReturnsList()
         {
             // arrange
@@ -43,8 +56,8 @@ namespace UnitTests
             int expectedTwo = 28;
 
             // act
-            var result = PredictNextNumber(firstLine, empty);
-            var resultTwo = PredictNextNumber(firstLineTwo, emptyTwo);
+            var result = PredictNextNumber(firstLine);
+            var resultTwo = PredictNextNumber(firstLineTwo);
 
             // assert
             Assert.Equal(expected, result);

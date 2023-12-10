@@ -8,20 +8,18 @@ namespace Shared.Solutions.DayNine
 
             long acc = 0;
             foreach (var line in parsedLines)
-                acc += PredictNextNumber(line, new List<List<int>>());
+                acc += PredictNextNumber(line);
 
             return acc;
         }
 
 
-        public static int PredictNextNumber(List<int> line, List<List<int>> lines)
+        public static int PredictNextNumber(List<int> line)
         {
             if (line.All(n => n == 0))
             {
                 return 0;
             }
-
-            lines.Add(line);
 
             List<int> newLine = new();
             for (int i = 0; i < line.Count - 1; i++)
@@ -30,7 +28,7 @@ namespace Shared.Solutions.DayNine
                 newLine.Add(newNum);
             }
 
-            int last = PredictNextNumber(newLine, lines);
+            int last = PredictNextNumber(newLine);
 
             return line[^1] + last;
         }
