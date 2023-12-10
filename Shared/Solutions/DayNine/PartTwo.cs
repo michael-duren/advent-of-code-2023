@@ -30,7 +30,7 @@ namespace Shared.Solutions.DayNine
 
             int last = PredictNextNumber(newLine);
 
-            return line[0] + last;
+            return line[0] - last;
         }
 
         public static List<List<int>> ParseInput(List<string> lines)
