@@ -4,42 +4,86 @@ public static class PartTwo
 {
     public class Map
     {
-        public required int[] Directions { get; init; }
+        public required List<int> Directions { get; init; }
         public Dictionary<string, string[]> Nodes { get; set; } = null!;
     }
 
 
-    public static int Solve(List<string> lines)
+    public static long Solve(List<string> lines)
     {
         Map map = ParseInput(lines);
 
-        List<string> currNodes = map.Nodes.Keys.Where(k => k.EndsWith('A')).ToList();
-        int moves = 0;
+        List<string> positions = map.Nodes.Keys.Where(k => k.EndsWith('A')).ToList();
+        List<List<int>> cycles = new();
 
-        while (!(currNodes.All(n => n.EndsWith('Z'))))
+        foreach (string position in positions)
         {
-            foreach (var direction in map.Directions)
+            List<int> cycle = new();
+            var current = position;
+            var currentSteps = map.Directions;
+            int stepCount = 0;
+            string? firstZ = null;
+
+            while (true)
             {
-                moves++;
-                for (int j = 0; j < currNodes.Count; j++)
+                while (stepCount == 0 || !current.EndsWith('Z'))
                 {
-                    string[] result = map.Nodes.TryGetValue(currNodes[j], out string[]? dir)
-                        ? dir
-                        : throw new Exception("Issue getting node value from dict");
-                    var nextItem = result[direction];
-                    currNodes[j] = nextItem;
+                    stepCount++;
+                    current = map.Nodes[current][currentSteps[0]];
+                    int firstEl = currentSteps[0];
+                    currentSteps.RemoveAt(0);
+                    currentSteps.Add(firstEl);
+                }
+
+                cycle.Add(stepCount);
+
+                if (firstZ is null)
+                {
+                    firstZ = current;
+                    stepCount = 0;
+                }
+                else if (current == firstZ)
+                {
+                    break;
                 }
             }
+
+            cycles.Add(cycle);
         }
 
-        return moves;
+        var nums = cycles.Select(c => c[0]).ToList();
+        long lcm = nums[0];
+        for (int i = 1; i < nums.Count; i++)
+        {
+            lcm = Lcm(lcm, (long)nums[i]);
+        }
+
+        return lcm;
+    }
+
+
+    private static long Gcd(long a, long b)
+    {
+        while (b != 0)
+        {
+            long temp = b;
+            b = a % b;
+            a = temp;
+        }
+
+        return a;
+    }
+
+    private static long Lcm(long a, long b)
+    {
+        return a / Gcd(a, b) * b; // Ensuring division happens first to avoid overflow
     }
 
     private static Map ParseInput(List<string> lines)
     {
         Map map = new()
         {
-            Directions = lines[0].Trim().ToCharArray().Select(x => x == 'L' ? 0 : 1).ToArray()
+            Directions = lines[0].Trim().ToCharArray().Select(x => x == 'L' ? 0 : 1).ToList()
         };
 
         Dictionary<string, string[]> nodes = new();

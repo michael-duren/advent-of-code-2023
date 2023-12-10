@@ -21,9 +21,9 @@ public class DayEightPartTwoTests
     public void PartOneTestInputOne()
     {
         // arrange
-        const int expected = 6;
+        const long expected = 6;
         // act 
-        int result = Solve(_testInput);
+        long result = Solve(_testInput);
 
         // assert
         Assert.Equal(expected, result);
