@@ -1,5 +1,5 @@
 ﻿using Shared;
-using static Shared.Solutions.DayEight.PartOne;
+using static Shared.Solutions.DayEight.PartTwo;
 
 string inputPath = PathInputFactory.Create("Eight").Input;
 
