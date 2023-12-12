@@ -57,28 +57,28 @@ namespace UnitTests
             char[,] maze = ParseInput(_testInput);
             Helpers.Result<Coords> start = FindStartingPoint(maze);
             int steps = 0;
-            List<Coords> seen = new List<Coords>();
-            foreach (Move move in Moves)
-            {
-                Walk(move, start.Ok, maze, ref steps, seen);
-            }
-
-            Assert.Equal(4, steps);
-        }
-        
-        [Fact]
-        public void Walk_ReturnsCorrectStepsTwo()
-        {
-            char[,] maze = ParseInput(_testInputTwo);
-            Helpers.Result<Coords> start = FindStartingPoint(maze);
-            int steps = 0;
-            List<Coords> seen = new List<Coords>();
+            bool[,] seen = new bool[maze.GetUpperBound(0), maze.GetUpperBound(1)];
             foreach (Move move in Moves)
             {
                 Walk(move, start.Ok, maze, ref steps, seen);
             }
 
             Assert.Equal(8, steps);
+        }
+
+        [Fact]
+        public void Walk_ReturnsCorrectStepsTwo()
+        {
+            char[,] maze = ParseInput(_testInputTwo);
+            Helpers.Result<Coords> start = FindStartingPoint(maze);
+            int steps = 0;
+            bool[,] seen = new bool[maze.GetUpperBound(0), maze.GetUpperBound(1)];
+            foreach (Move move in Moves)
+            {
+                Walk(move, start.Ok, maze, ref steps, seen);
+            }
+
+            Assert.Equal(16, steps);
         }
 
         [Fact]

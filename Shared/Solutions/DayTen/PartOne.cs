@@ -1,3 +1,4 @@
+using System.Xml.Schema;
 using static Shared.Helpers;
 
 namespace Shared.Solutions.DayTen
@@ -8,6 +9,21 @@ namespace Shared.Solutions.DayTen
         {
             public int X { get; set; }
             public int Y { get; set; }
+
+            public override bool Equals(object? obj)
+            {
+                if (obj is Coords other)
+                {
+                    return X == other.X && Y == other.Y;
+                }
+
+                return false;
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(X, Y);
+            }
         }
 
         public struct Move
@@ -28,76 +44,44 @@ namespace Shared.Solutions.DayTen
             Start = 'S'
         }
 
-        public static Move[] Moves { get; set; } =
-        {
-            new()
-            {
-                Direction = new Coords { X = 0, Y = -1 }, // up
-                AllowedTiles = new[]
-                {
-                    Tile.Vertical,
-                    Tile.SouthEast,
-                    Tile.SouthWest
-                }
-            },
-            new()
-            {
-                Direction = new Coords() { X = 1, Y = 0 }, // go right
-                AllowedTiles = new[]
-                {
-                    Tile.Horizontal,
-                    Tile.NorthEast,
-                    Tile.SouthEast
-                }
-            },
-            new()
-            {
-                Direction = new Coords() { X = 0, Y = 1 },
-                AllowedTiles = new[]
-                {
-                    Tile.Vertical,
-                    Tile.NorthEast,
-                    Tile.NorthWest
-                }
-            },
-            new()
-            {
-                Direction = new Coords() { X = -1, Y = 0 },
-                AllowedTiles = new[]
-                {
-                    Tile.Horizontal,
-                    Tile.NorthWest,
-                    Tile.NorthWest
-                }
-            }
-        };
-
 
         public static int Solve(List<string> input)
         {
-            char[,] map = ParseInput(input);
-            Result<Coords> start = FindStartingPoint(map);
-            return 0;
+            char[,] maze = ParseInput(input);
+            Result<Coords> start = FindStartingPoint(maze);
+            if (!string.IsNullOrEmpty(start.Err)) throw new Exception("Error parsing starting point");
+            bool[,] seen = new bool[input.Count, input[0].Length];
+            int steps = 0;
+
+            foreach (var move in Moves)
+            {
+                Walk(move, start.Ok, maze, ref steps, seen);
+            }
+
+            return steps / 2;
         }
 
-        public static bool Walk(Move nextMove, Coords curr, char[,] maze, ref int steps, List<Coords> seen)
+        public static bool Walk(Move nextMove, Coords curr, char[,] maze, ref int steps, bool[,] seen)
         {
-            curr.X = nextMove.Direction.X + curr.X;
-            curr.Y = nextMove.Direction.Y + curr.Y;
+            Coords next = new Coords()
+            {
+                X = nextMove.Direction.X + curr.X,
+                Y = nextMove.Direction.Y + curr.Y
+            };
 
-            if (curr.X >= maze.GetUpperBound(1) || curr.Y >= maze.GetUpperBound(0) || curr.X < 0 || curr.Y < 0)
+            if (next.X >= maze.GetUpperBound(1) || next.Y >= maze.GetUpperBound(0) || next.X < 0 || next.Y < 0)
             {
                 return false; // if out of bounds return
             }
 
-            if (seen.Any(c => c.X == curr.X && c.Y == curr.Y))
+            if (seen[next.Y, next.X])
             {
                 return false; // if we have already seen return
             }
 
-            char nextTile = maze[curr.Y, curr.X];
+            char nextTile = maze[next.Y, next.X];
 
-            if (nextTile == (char)Tile.Start)
+            if (nextTile == (char)Tile.Start && steps > 0)
             {
                 steps++;
                 return true; // if we find end count move
@@ -105,18 +89,21 @@ namespace Shared.Solutions.DayTen
 
             if (nextMove.AllowedTiles.All(t => (char)t != nextTile))
             {
-                return false; // if we cannot move here return false
+                return false; // invalid move
             }
 
-            seen.Add(curr);
+            seen[curr.Y, curr.X] = true;
+            steps++;
 
             foreach (Move move in Moves)
             {
-                if (!Walk(move, curr, maze, ref steps, seen)) continue;
-                steps++;
-                return true;
+                if (Walk(move, next, maze, ref steps, seen))
+                {
+                    return true;
+                }
             }
 
+            steps--;
             return false;
         }
 
@@ -150,6 +137,50 @@ namespace Shared.Solutions.DayTen
 
             return Err<Coords>("Could not find starting point");
         }
+
+        public static Move[] Moves { get; } =
+        {
+            new()
+            {
+                Direction = new Coords { X = 0, Y = -1 }, // up
+                AllowedTiles = new[]
+                {
+                    Tile.Vertical,
+                    Tile.SouthEast,
+                    Tile.SouthWest
+                }
+            },
+            new()
+            {
+                Direction = new Coords() { X = 1, Y = 0 }, // go right
+                AllowedTiles = new[]
+                {
+                    Tile.Horizontal,
+                    Tile.SouthWest,
+                    Tile.NorthWest
+                }
+            },
+            new()
+            {
+                Direction = new Coords() { X = 0, Y = 1 },
+                AllowedTiles = new[]
+                {
+                    Tile.Vertical,
+                    Tile.NorthEast,
+                    Tile.NorthWest
+                }
+            },
+            new()
+            {
+                Direction = new Coords() { X = -1, Y = 0 },
+                AllowedTiles = new[]
+                {
+                    Tile.Horizontal,
+                    Tile.NorthEast,
+                    Tile.SouthEast
+                }
+            }
+        };
 
         // TODO: Find total loop points
         // TODO: Derive farthest point from total point

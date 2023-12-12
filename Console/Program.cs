@@ -1,8 +1,8 @@
 ﻿using Shared;
-using static Shared.Solutions.DayNine.PartTwo;
+using static Shared.Solutions.DayTen.PartOne;
 
-string inputPath = PathInputFactory.Create("Nine").Input;
-
+string inputPath = PathInputFactory.Create("Ten").Input;
+//
 List<string> input = Helpers.ReadInput(inputPath);
 long result = Solve(input);
 
