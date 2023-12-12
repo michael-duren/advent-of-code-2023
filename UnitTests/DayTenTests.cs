@@ -52,13 +52,43 @@ namespace UnitTests
         }
 
         [Fact]
+        public void Walk_ReturnsCorrectSteps()
+        {
+            char[,] maze = ParseInput(_testInput);
+            Helpers.Result<Coords> start = FindStartingPoint(maze);
+            int steps = 0;
+            List<Coords> seen = new List<Coords>();
+            foreach (Move move in Moves)
+            {
+                Walk(move, start.Ok, maze, ref steps, seen);
+            }
+
+            Assert.Equal(4, steps);
+        }
+        
+        [Fact]
+        public void Walk_ReturnsCorrectStepsTwo()
+        {
+            char[,] maze = ParseInput(_testInputTwo);
+            Helpers.Result<Coords> start = FindStartingPoint(maze);
+            int steps = 0;
+            List<Coords> seen = new List<Coords>();
+            foreach (Move move in Moves)
+            {
+                Walk(move, start.Ok, maze, ref steps, seen);
+            }
+
+            Assert.Equal(8, steps);
+        }
+
+        [Fact]
         public void PartOne_TestSolution_One()
         {
             // arrange
-            const long expected = 4;
+            const int expected = 4;
 
             // act 
-            long actual = Solve(_testInput);
+            int actual = Solve(_testInput);
 
             // assert
             Assert.Equal(expected, actual);
@@ -68,10 +98,10 @@ namespace UnitTests
         public void PartOne_TestSolution_Two()
         {
             // arrange
-            const long expected = 8;
+            const int expected = 8;
 
             // act 
-            long actual = Solve(_testInputTwo);
+            int actual = Solve(_testInputTwo);
 
             // assert
             Assert.Equal(expected, actual);
