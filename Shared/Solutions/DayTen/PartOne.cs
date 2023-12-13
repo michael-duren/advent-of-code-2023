@@ -1,4 +1,3 @@
-using System.Xml.Schema;
 using static Shared.Helpers;
 
 namespace Shared.Solutions.DayTen
@@ -10,17 +9,19 @@ namespace Shared.Solutions.DayTen
             public int X { get; set; }
             public int Y { get; set; }
 
-            public override bool Equals(object? obj)
+            public override readonly bool Equals(object? obj)
             {
                 if (obj is Coords other)
                 {
                     return X == other.X && Y == other.Y;
                 }
-
-                return false;
+                else
+                {
+                    return false;
+                }
             }
 
-            public override int GetHashCode()
+            public override readonly int GetHashCode()
             {
                 return HashCode.Combine(X, Y);
             }
@@ -49,19 +50,23 @@ namespace Shared.Solutions.DayTen
         {
             char[,] maze = ParseInput(input);
             Result<Coords> start = FindStartingPoint(maze);
-            if (!string.IsNullOrEmpty(start.Err)) throw new Exception("Error parsing starting point");
-            bool[,] seen = new bool[input.Count, input[0].Length];
-            int steps = 0;
 
-            foreach (var move in Moves)
+            if (!string.IsNullOrEmpty(start.Err)) throw new Exception("Error parsing starting point");
+
+            bool[,] seen = new bool[input.Count, input[0].Length];
+            List<Coords> path = [];
+
+            foreach (Move move in Moves)
             {
-                Walk(move, start.Ok, maze, ref steps, seen);
+                if (Walk(move, start.Ok, maze, seen, path))
+                    break;
             }
 
-            return steps / 2;
+            return path.Count / 2;
         }
 
-        public static bool Walk(Move nextMove, Coords curr, char[,] maze, ref int steps, bool[,] seen)
+        public static bool Walk(Move nextMove, Coords curr, char[,] maze, bool[,] seen,
+            List<Coords> path)
         {
             Coords next = new Coords()
             {
@@ -74,17 +79,17 @@ namespace Shared.Solutions.DayTen
                 return false; // if out of bounds return
             }
 
+            char nextTile = maze[next.Y, next.X];
+
+            if (nextTile == (char)Tile.Start && path.Count > 0)
+            {
+                path.Add(next);
+                return true; // if we find end count move
+            }
+
             if (seen[next.Y, next.X])
             {
                 return false; // if we have already seen return
-            }
-
-            char nextTile = maze[next.Y, next.X];
-
-            if (nextTile == (char)Tile.Start && steps > 0)
-            {
-                steps++;
-                return true; // if we find end count move
             }
 
             if (nextMove.AllowedTiles.All(t => (char)t != nextTile))
@@ -93,17 +98,18 @@ namespace Shared.Solutions.DayTen
             }
 
             seen[curr.Y, curr.X] = true;
-            steps++;
+            path.Add(next);
+
 
             foreach (Move move in Moves)
             {
-                if (Walk(move, next, maze, ref steps, seen))
+                if (Walk(move, next, maze, seen, path))
                 {
                     return true;
                 }
             }
 
-            steps--;
+            path.Remove(next);
             return false;
         }
 
@@ -143,46 +149,43 @@ namespace Shared.Solutions.DayTen
             new()
             {
                 Direction = new Coords { X = 0, Y = -1 }, // up
-                AllowedTiles = new[]
-                {
+                AllowedTiles =
+                [
                     Tile.Vertical,
                     Tile.SouthEast,
                     Tile.SouthWest
-                }
+                ]
             },
             new()
             {
                 Direction = new Coords() { X = 1, Y = 0 }, // go right
-                AllowedTiles = new[]
-                {
+                AllowedTiles =
+                [
                     Tile.Horizontal,
                     Tile.SouthWest,
                     Tile.NorthWest
-                }
+                ]
             },
             new()
             {
                 Direction = new Coords() { X = 0, Y = 1 },
-                AllowedTiles = new[]
-                {
+                AllowedTiles =
+                [
                     Tile.Vertical,
                     Tile.NorthEast,
                     Tile.NorthWest
-                }
+                ]
             },
             new()
             {
                 Direction = new Coords() { X = -1, Y = 0 },
-                AllowedTiles = new[]
-                {
+                AllowedTiles =
+                [
                     Tile.Horizontal,
                     Tile.NorthEast,
                     Tile.SouthEast
-                }
+                ]
             }
         };
-
-        // TODO: Find total loop points
-        // TODO: Derive farthest point from total point
     }
 }

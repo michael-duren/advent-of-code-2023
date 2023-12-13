@@ -56,14 +56,15 @@ namespace UnitTests
         {
             char[,] maze = ParseInput(_testInput);
             Helpers.Result<Coords> start = FindStartingPoint(maze);
-            int steps = 0;
             bool[,] seen = new bool[maze.GetUpperBound(0), maze.GetUpperBound(1)];
+            List<Coords> path = new();
             foreach (Move move in Moves)
             {
-                Walk(move, start.Ok, maze, ref steps, seen);
+                if (Walk(move, start.Ok, maze, seen, path))
+                    break;
             }
 
-            Assert.Equal(8, steps);
+            Assert.Equal(8, path.Count);
         }
 
         [Fact]
@@ -71,14 +72,15 @@ namespace UnitTests
         {
             char[,] maze = ParseInput(_testInputTwo);
             Helpers.Result<Coords> start = FindStartingPoint(maze);
-            int steps = 0;
             bool[,] seen = new bool[maze.GetUpperBound(0), maze.GetUpperBound(1)];
+            List<Coords> path = new();
             foreach (Move move in Moves)
             {
-                Walk(move, start.Ok, maze, ref steps, seen);
+                if (Walk(move, start.Ok, maze, seen, path))
+                    break;
             }
 
-            Assert.Equal(16, steps);
+            Assert.Equal(16, path.Count);
         }
 
         [Fact]
