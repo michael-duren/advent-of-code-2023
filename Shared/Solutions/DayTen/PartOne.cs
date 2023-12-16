@@ -40,7 +40,6 @@ namespace Shared.Solutions.DayTen
             NorthWest = 'J',
             SouthWest = '7',
             SouthEast = 'F',
-            Ground = '.',
             Start = 'S'
         }
 
