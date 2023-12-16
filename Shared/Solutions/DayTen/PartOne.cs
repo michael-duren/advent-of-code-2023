@@ -63,11 +63,6 @@ namespace Shared.Solutions.DayTen
                 }
             }
 
-            foreach (var cord in path)
-            {
-                Console.WriteLine($"{cord.Y + 1}, {cord.X + 1}: {maze[cord.Y, cord.X]}");
-            }
-
             return path.Count / 2;
         }
 
