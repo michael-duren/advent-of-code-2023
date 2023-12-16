@@ -4,24 +4,22 @@ namespace Shared.Solutions.DayTen
 {
     public static class PartOne
     {
-        public struct Coords
+        public readonly struct Coords
         {
-            public int X { get; set; }
-            public int Y { get; set; }
+            public int X { get; init; }
+            public int Y { get; init; }
 
-            public override readonly bool Equals(object? obj)
+            public override bool Equals(object? obj)
             {
                 if (obj is Coords other)
                 {
                     return X == other.X && Y == other.Y;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
 
-            public override readonly int GetHashCode()
+            public override int GetHashCode()
             {
                 return HashCode.Combine(X, Y);
             }
@@ -29,8 +27,9 @@ namespace Shared.Solutions.DayTen
 
         public struct Move
         {
-            public Coords Direction { get; set; }
-            public Tile[] AllowedTiles { get; set; }
+            public Coords Direction { get; init; }
+            public Tile[] AllowedTilesTo { get; init; }
+            public Tile[] AllowedTilesFrom { get; set; }
         }
 
         public enum Tile
@@ -53,13 +52,20 @@ namespace Shared.Solutions.DayTen
 
             if (!string.IsNullOrEmpty(start.Err)) throw new Exception("Error parsing starting point");
 
-            bool[,] seen = new bool[input.Count, input[0].Length];
+            bool[,] seen = new bool[maze.GetUpperBound(0) + 1, maze.GetUpperBound(1) + 1];
             List<Coords> path = [];
 
             foreach (Move move in Moves)
             {
                 if (Walk(move, start.Ok, maze, seen, path))
+                {
                     break;
+                }
+            }
+
+            foreach (var cord in path)
+            {
+                Console.WriteLine($"{cord.Y + 1}, {cord.X + 1}: {maze[cord.Y, cord.X]}");
             }
 
             return path.Count / 2;
@@ -74,14 +80,16 @@ namespace Shared.Solutions.DayTen
                 Y = nextMove.Direction.Y + curr.Y
             };
 
-            if (next.X >= maze.GetUpperBound(1) || next.Y >= maze.GetUpperBound(0) || next.X < 0 || next.Y < 0)
+            if (next.X > maze.GetUpperBound(1) || next.Y > maze.GetUpperBound(0) || next.X < 0 || next.Y < 0)
             {
                 return false; // if out of bounds return
             }
 
+            char currTile = maze[curr.Y, curr.X];
             char nextTile = maze[next.Y, next.X];
 
-            if (nextTile == (char)Tile.Start && path.Count > 0)
+            if (nextTile == (char)Tile.Start && path.Count > 0 &&
+                nextMove.AllowedTilesFrom.Any(t => (char)t == currTile))
             {
                 path.Add(next);
                 return true; // if we find end count move
@@ -92,7 +100,11 @@ namespace Shared.Solutions.DayTen
                 return false; // if we have already seen return
             }
 
-            if (nextMove.AllowedTiles.All(t => (char)t != nextTile))
+            // if all the allowed to move to tiles do not equal the next tile. OR if all the moveFrom tiles do not equal the current tile
+            bool validMove = ((nextMove.AllowedTilesFrom.Any(t => (char)t == currTile) &&
+                               nextMove.AllowedTilesTo.Any(t => (char)t == nextTile))) ||
+                             (currTile == (char)Tile.Start && nextMove.AllowedTilesTo.Any(t => (char)t == nextTile));
+            if (!validMove)
             {
                 return false; // invalid move
             }
@@ -149,7 +161,45 @@ namespace Shared.Solutions.DayTen
             new()
             {
                 Direction = new Coords { X = 0, Y = -1 }, // up
-                AllowedTiles =
+                AllowedTilesTo =
+                [
+                    Tile.Vertical,
+                    Tile.SouthEast,
+                    Tile.SouthWest
+                ],
+                AllowedTilesFrom =
+                [
+                    Tile.Vertical,
+                    Tile.NorthEast,
+                    Tile.NorthWest
+                ],
+            },
+            new()
+            {
+                Direction = new Coords() { X = 1, Y = 0 }, // go right
+                AllowedTilesTo =
+                [
+                    Tile.Horizontal,
+                    Tile.SouthWest,
+                    Tile.NorthWest
+                ],
+                AllowedTilesFrom =
+                [
+                    Tile.Horizontal,
+                    Tile.SouthEast,
+                    Tile.NorthEast
+                ]
+            },
+            new()
+            {
+                Direction = new Coords() { X = 0, Y = 1 }, // go down
+                AllowedTilesTo =
+                [
+                    Tile.Vertical,
+                    Tile.NorthEast,
+                    Tile.NorthWest
+                ],
+                AllowedTilesFrom =
                 [
                     Tile.Vertical,
                     Tile.SouthEast,
@@ -158,32 +208,18 @@ namespace Shared.Solutions.DayTen
             },
             new()
             {
-                Direction = new Coords() { X = 1, Y = 0 }, // go right
-                AllowedTiles =
-                [
-                    Tile.Horizontal,
-                    Tile.SouthWest,
-                    Tile.NorthWest
-                ]
-            },
-            new()
-            {
-                Direction = new Coords() { X = 0, Y = 1 },
-                AllowedTiles =
-                [
-                    Tile.Vertical,
-                    Tile.NorthEast,
-                    Tile.NorthWest
-                ]
-            },
-            new()
-            {
-                Direction = new Coords() { X = -1, Y = 0 },
-                AllowedTiles =
+                Direction = new Coords() { X = -1, Y = 0 }, // go left
+                AllowedTilesTo =
                 [
                     Tile.Horizontal,
                     Tile.NorthEast,
                     Tile.SouthEast
+                ],
+                AllowedTilesFrom =
+                [
+                    Tile.Horizontal,
+                    Tile.NorthWest,
+                    Tile.SouthWest
                 ]
             }
         };
