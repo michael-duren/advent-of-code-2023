@@ -1,24 +1,58 @@
 using Shared;
-using static Shared.Solutions.DayTen.PartOne;
+using static Shared.Solutions.DayTen.PartTwo;
 
 namespace UnitTests
 {
-    public class DayTenTests
+    public class DayTenPartTwoTests
     {
         private readonly List<string> _testInput;
         private readonly List<string> _testInputTwo;
-        private readonly List<string> _input;
+        private readonly List<string> _testPartTwoInputOne;
+        private readonly List<string> _testPartTwoInputTwo;
+        private readonly List<string> _testPartTwoInputThree;
 
-        public DayTenTests()
+        public DayTenPartTwoTests()
         {
             string testPath = PathInputFactory.Create("Ten").Test;
             string testPathTwo = PathInputFactory.Create("Ten").TestTwo;
-            string inputPath = PathInputFactory.Create("Ten").Input;
 
             _testInput = Helpers.ReadInput(testPath);
             _testInputTwo = Helpers.ReadInput(testPathTwo);
-            _input = Helpers.ReadInput(inputPath);
+            _testPartTwoInputOne = Helpers.ReadInput(PathInputFactory.Create("Ten", "Two").Test);
+            _testPartTwoInputTwo = Helpers.ReadInput(PathInputFactory.Create("Ten", "Two").TestTwo);
+            _testPartTwoInputThree = Helpers.ReadInput(PathInputFactory.Create("Ten", "Two").TestThree);
         }
+
+        [Fact]
+        public void Solve_ReturnsCorrectOnTestInputOne()
+        {
+            const int expected = 4;
+
+            int result = Solve(_testPartTwoInputOne);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void Solve_ReturnsCorrectOnTestInputTwo()
+        {
+            const int expected = 8;
+
+            int result = Solve(_testPartTwoInputTwo);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void Solve_ReturnsCorrectOnTestInputThree()
+        {
+            const int expected = 10;
+
+            int result = Solve(_testPartTwoInputThree);
+
+            Assert.Equal(expected, result);
+        }
+
 
         [Fact]
         public void ParseInput_CorrectlyCreatesTwoDArray()
@@ -83,32 +117,6 @@ namespace UnitTests
             }
 
             Assert.Equal(16, path.Count);
-        }
-
-        [Fact]
-        public void PartOne_TestSolution_One()
-        {
-            // arrange
-            const int expected = 4;
-
-            // act 
-            int actual = Solve(_testInput);
-
-            // assert
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public void PartOne_TestSolution_Two()
-        {
-            // arrange
-            const int expected = 8;
-
-            // act 
-            int actual = Solve(_testInputTwo);
-
-            // assert
-            Assert.Equal(expected, actual);
         }
     }
 }
