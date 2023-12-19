@@ -24,4 +24,16 @@ public static class Helpers
         public T Ok { get; set; }
         public string Err { get; set; }
     }
+
+    public static void PrintMaze(char[,] maze)
+    {
+        for (int i = 0; i <= maze.GetUpperBound(0); i++)
+        {
+            Console.WriteLine();
+            for (int j = 0; j <= maze.GetUpperBound(1); j++)
+            {
+                Console.Write(maze[i, j]);
+            }
+        }
+    }
 }

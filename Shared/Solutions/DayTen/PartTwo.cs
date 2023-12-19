@@ -41,7 +41,9 @@ namespace Shared.Solutions.DayTen
             SouthWest = '7',
             SouthEast = 'F',
             Start = 'S',
-            Ground = '.'
+            Ground = '.',
+            Path = 'X',
+            Fill = '0'
         }
 
 
@@ -63,7 +65,49 @@ namespace Shared.Solutions.DayTen
                 }
             }
 
-            return path.Count / 2;
+            // Fill in from each side of the maze
+            FloodFill(maze, new Coords() { X = 0, Y = 0 });
+            FloodFill(maze, new Coords() { X = maze.GetUpperBound(1), Y = 0 });
+            FloodFill(maze, new Coords() { X = maze.GetUpperBound(1), Y = maze.GetUpperBound(0) });
+            FloodFill(maze, new Coords() { X = 0, Y = maze.GetUpperBound(0) });
+
+            int internalChars = 0;
+
+            for (int i = 0; i <= maze.GetUpperBound(0); i++)
+            {
+                for (int j = 0; j < maze.GetUpperBound(1); j++)
+                {
+                    char curr = maze[i, j];
+                    if (curr != (char)Tile.Fill && curr != (char)Tile.Start && curr != (char)Tile.Path)
+                    {
+                        internalChars++;
+                    }
+                }
+            }
+
+            PrintMaze(maze);
+
+            return internalChars;
+        }
+
+        public static void FloodFill(char[,] maze, Coords coords)
+        {
+            if (IsOutOfBounds(maze, coords))
+            {
+                return;
+            }
+
+            if (maze[coords.Y, coords.X] == (char)Tile.Fill || maze[coords.Y, coords.X] == (char)Tile.Path)
+            {
+                return;
+            }
+
+            maze[coords.Y, coords.X] = (char)Tile.Fill;
+
+            foreach (Move move in Moves)
+            {
+                FloodFill(maze, new Coords() { X = coords.X + move.Direction.X, Y = coords.Y + move.Direction.Y });
+            }
         }
 
         public static bool Walk(Move nextMove, Coords curr, char[,] maze, bool[,] seen,
@@ -75,7 +119,7 @@ namespace Shared.Solutions.DayTen
                 Y = nextMove.Direction.Y + curr.Y
             };
 
-            if (next.X > maze.GetUpperBound(1) || next.Y > maze.GetUpperBound(0) || next.X < 0 || next.Y < 0)
+            if (IsOutOfBounds(maze, next))
             {
                 return false; // if out of bounds return
             }
@@ -97,7 +141,7 @@ namespace Shared.Solutions.DayTen
 
             // if all the allowed to move to tiles do not equal the next tile. OR if all the moveFrom tiles do not equal the current tile
             bool validMove = (nextMove.AllowedTilesFrom.Any(t => (char)t == currTile) &&
-                               nextMove.AllowedTilesTo.Any(t => (char)t == nextTile)) ||
+                              nextMove.AllowedTilesTo.Any(t => (char)t == nextTile)) ||
                              (currTile == (char)Tile.Start && nextMove.AllowedTilesTo.Any(t => (char)t == nextTile));
             if (!validMove)
             {
@@ -112,12 +156,18 @@ namespace Shared.Solutions.DayTen
             {
                 if (Walk(move, next, maze, seen, path))
                 {
+                    maze[next.Y, next.X] = 'X';
                     return true;
                 }
             }
 
             _ = path.Remove(next);
             return false;
+        }
+
+        private static bool IsOutOfBounds(char[,] maze, Coords coords)
+        {
+            return coords.X > maze.GetUpperBound(1) || coords.Y > maze.GetUpperBound(0) || coords.X < 0 || coords.Y < 0;
         }
 
         public static char[,] ParseInput(List<string> input)
